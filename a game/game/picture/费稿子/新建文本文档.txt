@@ -1,0 +1,48 @@
+https://www.zhizuotu.com/buttonColor
+http://www.sy15168.cn/bgxz/html/117.html
+模 块 名：SetAni
+'功    能：
+'返 回 值：成功/失败:True/False
+'参    数：SetAni(句柄,光标文件路径, 安装/卸载)
+'引    用：无
+'外部函数：[LoadCursorFromFile][SetClassLong][GetClassLong][DestroyCursor]
+'内部变量：{CurSor=这个控件的新光标}{OldCur=这个控件的原来的光标}[ret=返回值]
+'调用方法：ret=SetAni(Me.hWnd,"c:\Ani.ani",True)
+Public Declare Function LoadCursorFromFile Lib "user32" Alias "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
+Public Declare Function SetClassLong Lib "user32" Alias "SetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+Public Declare Function GetClassLong Lib "user32" Alias "GetClassLongA" (ByVal hWnd As Long, ByVal nIndex As Long) As Long
+Public Declare Function DestroyCursor Lib "user32" (ByVal hCursor As Long) As Long
+Public Const GCL_HCURSOR = (-12)
+Dim CurSor As Long
+Dim OldCur As Long
+Public Function SetAni(ByVal hWnd As Long, ByVal PathAni As String, ByVal Install As Boolean) As Boolean
+    
+    Dim ret As Long
+    If Install Then
+        OldCur = GetClassLong(hWnd, GCL_HCURSOR)
+        CurSor = LoadCursorFromFile(PathAni)
+        ret = SetClassLong(hWnd, GCL_HCURSOR, CurSor)
+    Else
+        ret = SetClassLong(hWnd, GCL_HCURSOR, OldCur)
+    End If
+End Function
+
+Option Explicit
+
+Private Declare Function LoadCursorFromFile Lib "user32" Alias "LoadCursorFromFileA" (ByVal lpFileName As String) As Long
+Private Declare Function DestroyCursor Lib "user32" (ByVal hCursor As Long) As Long
+Private Declare Function SetClassLong Lib "user32" Alias "SetClassLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+' Const declare
+Private Const GCL_HCURSOR = (-12)
+
+Dim AniCur As Long
+
+
+Private Sub Form_Load()
+    AniCur& = LoadCursorFromFile(App.Path & "\Neko.ani")  '自己找一个ani文件
+    SetClassLong Me.hwnd, GCL_HCURSOR, AniCur
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+    DestroyCursor AniCur
+End Sub
